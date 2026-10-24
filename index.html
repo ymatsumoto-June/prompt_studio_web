@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Prompt Studio - ビジネス特化型AIプロンプト即時生成メーカー【完全無料】</title>
+  <meta name="description" content="コピペで即日業務効率化！メール、議事録要約、企画書、Excel関数まで、実戦用AIプロンプトをワンクリックで自動生成する無料Webツール。">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+              950: '#082f49',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap');
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- ヘッダー -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-between p-2 shadow-lg shadow-brand-500/20">
+          <i data-lucide="terminal" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight flex items-center gap-2">
+            AI Prompt Studio
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">PRO Free</span>
+          </h1>
+          <p class="text-xs text-slate-400">ビジネス特化型AIプロンプト即時生成メーカー</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="#note-banner" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          <i data-lucide="book-open" class="w-4 h-4 text-brand-400"></i>
+          実践バイブル（note）
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+    
+    <!-- 左ペイン：設定・入力フォーム -->
+    <div class="w-full lg:w-5/12 flex flex-col gap-6">
+      
+      <!-- カテゴリ選択 -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+          <i data-lucide="layers" class="w-4 h-4 text-brand-400"></i>
+          1. 業務カテゴリを選択
+        </label>
+        <div class="grid grid-cols-2 gap-2" id="category-selector">
+          <!-- JSでカテゴリボタンを描画 -->
+        </div>
+      </div>
+
+      <!-- テンプレート選択 -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+          <i data-lucide="file-text" class="w-4 h-4 text-brand-400"></i>
+          2. 作成したいタスク・テンプレート
+        </label>
+        <select id="template-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-slate-200">
+          <!-- JSで動的にオプション生成 -->
+        </select>
+        <p id="template-description" class="text-xs text-slate-400 mt-2.5 leading-relaxed bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/80"></p>
+      </div>
+
+      <!-- 変数入力フィールド（動的生成） -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex-1">
+        <div class="flex items-center justify-between mb-3">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-brand-400"></i>
+            3. 必要な情報を穴埋め入力
+          </label>
+          <span class="text-[11px] text-slate-500">※空欄でも動きます</span>
+        </div>
+        <div id="dynamic-inputs" class="space-y-4">
+          <!-- JSで動的にインプットフィールドを描画 -->
+        </div>
+      </div>
+
+      <!-- オプション設定 -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+          <i data-lucide="settings" class="w-4 h-4 text-brand-400"></i>
+          4. プロンプト出力スタイル
+        </label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-500/50 transition">
+            <input type="radio" name="output_style" value="standard" checked class="text-brand-500 focus:ring-0">
+            <div>
+              <span class="block text-xs font-semibold text-slate-200">標準フォーマット</span>
+              <span class="block text-[10px] text-slate-400">ChatGPT/Claude共通</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-brand-500/50 transition">
+            <input type="radio" name="output_style" value="xml" class="text-brand-500 focus:ring-0">
+            <div>
+              <span class="block text-xs font-semibold text-slate-200 flex items-center gap-1">
+                XMLタグ構文
+                <span class="text-[9px] px-1 rounded bg-purple-500/20 text-purple-300">Claude推奨</span>
+              </span>
+              <span class="block text-[10px] text-slate-400">最高精度の認知制御</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 右ペイン：生成結果プレビュー＆コピー -->
+    <div class="w-full lg:w-7/12 flex flex-col gap-6">
+      
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col flex-1">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i>
+            <h2 class="font-bold text-base text-slate-100">生成された実戦用プロンプト</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="copy-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition shadow-lg shadow-brand-600/30 active:scale-95">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+              <span>ワンクリックでコピー</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- プレビュー枠 -->
+        <div class="relative flex-1 min-h-[420px] bg-slate-950 rounded-xl border border-slate-800 p-4">
+          <textarea id="prompt-output" readonly class="w-full h-full bg-transparent text-slate-200 text-xs font-mono resize-none focus:outline-none custom-scrollbar leading-relaxed" placeholder="左側のフォームを操作すると、ここに即座にプロンプトが生成されます..."></textarea>
+          
+          <!-- コピー完了トースト -->
+          <div id="copy-toast" class="absolute bottom-6 right-6 hidden items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/90 text-white text-xs font-semibold shadow-lg backdrop-blur">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            クリップボードにコピーしました！
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between text-[11px] text-slate-400 px-1">
+          <span>💡 ChatGPT / Claude / Gemini の入力欄にそのまま貼り付けて送信してください</span>
+          <span id="char-count">0 文字</span>
+        </div>
+      </div>
+
+      <!-- note有料コンテンツへの誘導バナー（高CVR導線） -->
+      <div id="note-banner" class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative z-10">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-bold mb-2">
+              <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+              noteにて公式バイブル公開中
+            </div>
+            <h3 class="text-base font-bold text-white mb-1">
+              現場の残業をゼロにする「ビジネス特化型AIプロンプト実戦大全50選」
+            </h3>
+            <p class="text-xs text-slate-300 leading-relaxed max-w-xl">
+              本ツールに収録されている基本パターンのほか、炎上防止謝罪、条件交渉、役員稟議、Excelモダン関数、競合分析など、現場の仕事を10倍速にする決定版大全集（全57,000文字）を公開中！
+            </p>
+          </div>
+          <div class="flex flex-col gap-2 w-full sm:w-auto shrink-0">
+            <a href="https://note.com/yu_ki_engineer/n/n0c23f70f9e92?sub_rt=share_pb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-400 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition">
+              <span>プロンプト50選を読む</span>
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+            </a>
+            <a href="https://note.com/yu_ki_engineer/n/ncb794999f53a?sub_rt=share_pb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 transition">
+              <span>0円自動化バイブル（980円）</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>© 2026 AI Prompt Studio - All rights reserved. Free for commercial & personal use.</p>
+      <div class="flex items-center space-x-4">
+        <a href="https://note.com/yu_ki_engineer" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition">note記事一覧</a>
+        <a href="https://www.threads.net/@yu_ki_dev" target="_blank" rel="noopener noreferrer" class="hover:text-slate-300 transition">Threads公式</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- アプリロジック -->
+  <script src="app.js"></script>
+</body>
+</html>
