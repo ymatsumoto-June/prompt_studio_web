@@ -1,15 +1,17 @@
-// AI Prompt Studio - アプリケーションロジック
+// AI Prompt Studio - アプリケーションロジック v2.0 (全12種の実戦テンプレート)
 
 const TEMPLATES_DATA = {
   categories: [
     { id: "email", name: "メール・連絡", icon: "mail" },
     { id: "meeting", name: "議事録・要約", icon: "file-text" },
     { id: "planning", name: "企画・ブレスト", icon: "lightbulb" },
-    { id: "data", name: "Excel・データ", icon: "table" },
-    { id: "deep", name: "深層思考・分析", icon: "cpu" }
+    { id: "data", name: "Excel・自動化", icon: "table" },
+    { id: "deep", name: "深層推論・監査", icon: "cpu" }
   ],
   templates: [
+    // ----------------------------------------------------
     // メールカテゴリ
+    // ----------------------------------------------------
     {
       id: "email_decline",
       categoryId: "email",
@@ -35,9 +37,9 @@ const TEMPLATES_DATA = {
 - 提案する代替案: ${vars.alternative}
 </input_data>
 <constraints>
-- 相手の立場や心情に十分配慮し、感謝と誠意を冒頭に伝えること
-- 理由を客観的・建設的に述べ、単なる拒絶に終わらせないこと
-- 代替案のメリットを簡潔に伝え、次の検討を促す結びとすること
+- 相手の急な相談に対する感謝と配慮を冒頭に述べること
+- 角を立てず、業務品質を担保するための誠実な理由として説明すること
+- 代替案を選択肢として自然に提案すること
 </constraints>
 <output_format>
 件名案（2パターン）および本文（挨拶〜本題〜辞退理由〜代替案〜結び）を出力してください。
@@ -52,11 +54,6 @@ const TEMPLATES_DATA = {
 - 依頼内容: ${vars.request_detail}
 - 辞退理由: ${vars.reason}
 - 代替案: ${vars.alternative}
-
-# 制約事項
-- 相手の急な相談に対する感謝と配慮を冒頭に述べること
-- 角を立てず、業務品質を担保するための誠実な理由として説明すること
-- 代替案を選択肢として自然に提案すること
 
 # 出力形式
 - 件名案（2パターン）
@@ -78,48 +75,59 @@ const TEMPLATES_DATA = {
         { id: "prevent_plan", label: "再発防止・リカバリー策", placeholder: "例: 担当者を2名増員して夜間テスト実施", default: "人員を追加アサインし、中間進捗を本日夕方に報告" }
       ],
       generate: (vars, isXml) => {
-        if (isXml) {
-          return `<role>${vars.role}</role>
-<context>
-納期の遅延が見込まれる状況において、事後報告ではなく「事前の誠意ある相談・報告」を行い、信頼関係の毀損を最小限に食い止めるメール文面を作成します。
-</context>
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>納期の遅延が見込まれる状況において、事後の言い訳ではなく事前の誠意ある相談を行い、信頼を維持する文面を作成します。</context>
 <input_data>
 - 宛先: ${vars.target_person}
-- 現在の進捗: ${vars.current_status}
+- 現状進捗: ${vars.current_status}
 - 遅延要因: ${vars.delay_reason}
 - 新納期目標: ${vars.new_deadline}
 - リカバリー策: ${vars.prevent_plan}
 </input_data>
 <constraints>
 - 冒頭で結論（納期の再調整の相談・お詫び）を明快に述べること
-- 言い訳に終始せず、現状と挽回プランを具体的に提示すること
-- 相手の確認負担を減らすため要点を箇条書きで整理すること
+- 現状と挽回プランを具体的に提示すること
+</constraints>
+<output_format>件名（緊急度と案件名が即伝わるもの）およびメール本文を出力してください。</output_format>`
+          : `# 指示\nあなたは【${vars.role}】です。納期遅延の事前相談とお詫びを行い、リカバリー策を提示するメールを作成してください。\n\n# 入力情報\n- 宛先: ${vars.target_person}\n- 進捗: ${vars.current_status}\n- 遅延要因: ${vars.delay_reason}\n- 新納期: ${vars.new_deadline}\n- 挽回策: ${vars.prevent_plan}\n\n# 出力形式\n- 件名案\n- 本文`;
+      }
+    },
+    {
+      id: "email_outreach",
+      categoryId: "email",
+      name: "新規開拓・アポ獲得コールドメール（決裁者向け）",
+      desc: "多忙な経営者・決裁者が思わず返信したくなる、短文で強烈な価値を伝える提案文です。",
+      role: "成約率上位1%のトップB2Bインサイドセールス",
+      fields: [
+        { id: "target_person", label: "送信先の役職・業界", placeholder: "例: 従業員30名規模のIT企業 経営者様", default: "中小企業 経営者様" },
+        { id: "pain_point", label: "相手が抱えている想定の悩み", placeholder: "例: バックオフィスの手作業が多く残業代が高騰している", default: "ルーティン業務の属人化と人手不足に悩んでいる" },
+        { id: "solution_hook", label: "こちらが提供できる具体的ベネフィット", placeholder: "例: 既存の業務フローを変えずに月80時間削減した実績", default: "月80時間の残業を0円インフラ×AIで削減した具体的事例の共有" }
+      ],
+      generate: (vars, isXml) => {
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>多忙な決裁者がスマホで10秒で読め、「話だけでも聞いてみるか」と返信したくなる高成約コールドメールを作成します。</context>
+<input_data>
+- 送信対象: ${vars.target_person}
+- 相手のペイン: ${vars.pain_point}
+- 提供価値: ${vars.solution_hook}
+</input_data>
+<constraints>
+- 売り込み感を排除し、「他社成功事例の情報提供」というギブのスタンスをとること
+- 本文は200〜300文字以内で、スクロール不要で完結させること
+- CTA（行動喚起）は「15分間のオンライン面談」または「資料提供」の低ハードル設計にすること
 </constraints>
 <output_format>
-件名（緊急度と要件が即伝わるもの）およびメール本文を出力してください。
-</output_format>`;
-        } else {
-          return `# 指示
-あなたは【${vars.role}】です。
-納期遅延の懸念が生じた際、クライアントに事前相談とお詫びを行い、リカバリープランを提示するメールを作成してください。
-
-# 入力データ
-- 宛先: ${vars.target_person}
-- 現在の進捗: ${vars.current_status}
-- 遅延要因: ${vars.delay_reason}
-- 提示する新納期: ${vars.new_deadline}
-- 対策・リカバリー策: ${vars.prevent_plan}
-
-# 出力要件
-- 件名（緊急性と案件名がわかるもの）
-- 誠意とお詫び
-- 現状・原因・対策・新期日の簡潔なまとめ
-- 相手への確認・要望`;
-        }
+開封率30%超を狙う件名案（3パターン）およびメール本文を出力してください。
+</output_format>`
+          : `# 指示\nあなたは【${vars.role}】です。決裁者向けに短文で刺さるアポ獲得メールを作成してください。\n\n# 前提\n- 宛先: ${vars.target_person}\n- 相手の課題: ${vars.pain_point}\n- 提示ベネフィット: ${vars.solution_hook}\n\n# 要件\n- 本文250文字以内の短文\n- 売り込まず事例共有のスタンス\n- 件名3パターン`;
       }
     },
 
+    // ----------------------------------------------------
     // 議事録・要約カテゴリ
+    // ----------------------------------------------------
     {
       id: "meeting_summary",
       categoryId: "meeting",
@@ -131,48 +139,65 @@ const TEMPLATES_DATA = {
         { id: "transcript", label: "会話ログ・メモ（コピペ用枠）", placeholder: "ここにZoomやTeamsの文字起こしを貼り付けます", default: "【ここに会議の文字起こしテキストを貼り付けてください】" }
       ],
       generate: (vars, isXml) => {
-        if (isXml) {
-          return `<role>${vars.role}</role>
-<context>
-混沌とした会議の文字起こしログから雑談や脱線した議論を徹底的に削ぎ落とし、関係者が即座に行動できるアクションアジェンダを抽出します。
-</context>
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>混沌とした会議文字起こしから雑談を削ぎ落とし、関係者が即座に行動できるアクションアジェンダを抽出します。</context>
 <input_data>
-<meeting_theme>${vars.meeting_theme}</meeting_theme>
+<theme>${vars.meeting_theme}</theme>
 <transcript>
 ${vars.transcript}
 </transcript>
 </input_data>
 <constraints>
-- 結論・決定事項（Decisions）を最優先でリスト化すること
-- ToDoには必ず「担当者（Who）」と「期日・期限（When）」を明記すること（言及がない場合は要確認と明記）
-- 合意に至らなかった未決課題（Open Issues）を明確に分離すること
+- 結論・決定事項（Decisions）を最優先でリスト化
+- ToDoには必ず「担当者（Who）」と「期日（When）」を明記
+- 未決課題（Open Issues）を明確に分離
 </constraints>
 <output_format>
 1. ミーティングサマリー（3行要約）
 2. 決定事項一覧（箇条書き）
 3. ToDoタスク一覧（タスク名 / 担当者 / 期日）
 4. 次回検討・持ち越し課題
-</output_format>`;
-        } else {
-          return `# 指示
-以下の会議文字起こしから、重要事項のみを抽出して実戦的な議事録を作成してください。
-
-# 会議テーマ
-${vars.meeting_theme}
-
-# 文字起こしデータ
-${vars.transcript}
-
-# 抽出・整理ルール
-1. 【決定事項】合意された結論のみを端的に抽出
-2. 【ToDoアクション】誰が・何を・いつまでにやるかをテーブルまたは箇条書き化
-3. 【未決課題】ペンディングとなった議論を整理
-4. 雑談や重複発言はすべてカットすること`;
-        }
+</output_format>`
+          : `# 指示\n以下の会議文字起こしから、重要事項のみを抽出して実戦的な議事録を作成してください。\n\n# テーマ: ${vars.meeting_theme}\n# 文字起こし:\n${vars.transcript}\n\n# 抽出項目\n1. 3行サマリー\n2. 決定事項\n3. ToDo（担当者・期日つき）\n4. 保留課題`;
+      }
+    },
+    {
+      id: "meeting_3line_exec",
+      categoryId: "meeting",
+      name: "忙しい役員向け「3行エグゼクティブサマリー」",
+      desc: "数千文字の長文資料や長時間の報告を、1分で意思決定できる極限の3行に圧縮します。",
+      role: "経営企画室長・シニア戦略アドバイザー",
+      fields: [
+        { id: "report_content", label: "要約対象の長文レポート・資料テキスト", placeholder: "資料本文や週報・報告書を貼り付けます", default: "【ここに要約したい長文レポートや資料テキストを貼り付けてください】" }
+      ],
+      generate: (vars, isXml) => {
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>忙しい役員・経営陣が10秒で全体の要諦と意思決定ポイントを掴めるように、極限まで無駄を削ぎ落とした3行サマリーを生成します。</context>
+<input_data>
+${vars.report_content}
+</input_data>
+<constraints>
+- 1行目: 【結論・最重要事実】何が起きたか／何が決定されたか
+- 2行目: 【背景・要因】なぜそうなったのか（定量的根拠を含む）
+- 3行目: 【経営判断・ネクストアクション】経営陣が今判断・承認すべきこと
+- 各行は50〜80文字程度で、極めてシャープな体言止め・要約文とすること
+</constraints>
+<output_format>
+【エグゼクティブサマリー（3行要約）】
+1. 
+2. 
+3. 
+【補足の定量的ポイント（3点）】
+</output_format>`
+          : `# 指示\n以下の資料を、多忙な役員向けに「極限の3行エグゼクティブサマリー」に圧縮してください。\n\n# 対象資料:\n${vars.report_content}\n\n# 構成要件:\n1行目: 結論・最重要トピック\n2行目: 背景と定量的要因\n3行目: 経営判断・承認が必要な事項`;
       }
     },
 
+    // ----------------------------------------------------
     // 企画・ブレストカテゴリ
+    // ----------------------------------------------------
     {
       id: "planning_devil",
       categoryId: "planning",
@@ -185,11 +210,9 @@ ${vars.transcript}
         { id: "pricing", label: "想定価格・マネタイズ", placeholder: "例: 初期5万円＋月額1万円のサブスク", default: "買い切り2,980円〜9,800円のデジタル教材販売" }
       ],
       generate: (vars, isXml) => {
-        if (isXml) {
-          return `<role>${vars.role}</role>
-<context>
-お世辞やポジティブな励ましを一切排除し、事業が市場で失敗する構造的リスクを徹底的に批判・検証（Stress Test）します。
-</context>
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>お世辞やポジティブな励ましを一切排除し、事業が市場で失敗する構造的リスクを徹底的に批判・検証（Stress Test）します。</context>
 <input_data>
 - 事業概要: ${vars.business_idea}
 - ターゲット市場: ${vars.target_market}
@@ -197,33 +220,78 @@ ${vars.transcript}
 </input_data>
 <constraints>
 - お世辞や一般的な応援コメントは一切禁止
-- 「競合優位性の欠如」「顧客獲得コスト（CAC）高騰」「LTV（顧客生涯価値）の限界」の3つの切り口から冷徹に弱点を突くこと
+- 「競合優位性の欠如」「顧客獲得コスト（CAC）高騰」「LTVの限界」の3つの切り口から冷徹に弱点を突くこと
 - 最後に、その弱点を克服して生存率を跳ね上げるための【逆転の一手（ピボット案）】を提示すること
 </constraints>
 <output_format>
 1. 辛口総評（なぜこのままだと90%失敗するのか）
 2. 3大構造的リスクと盲点
 3. 生き残るための具体的ピボット戦略
-</output_format>`;
-        } else {
-          return `# 指示
-あなたは【${vars.role}】です。
-以下の事業企画に対し、お世辞抜きの辛口レビューを行い、失敗確率の高いボトルネックを指摘してください。
-
-# 企画概要
-- 事業内容: ${vars.business_idea}
-- ターゲット: ${vars.target_market}
-- 価格・モデル: ${vars.pricing}
-
-# 指摘要件
-1. なぜ既存競合に押し潰されるリスクがあるか？
-2. 集客とマネタイズで必ず直面する壁は何か？
-3. この事業を大化けさせるための「独自の差別化の切り口」`;
-        }
+</output_format>`
+          : `# 指示\nあなたは【${vars.role}】です。以下の事業企画に対し、お世辞抜きの辛口レビューを行い、失敗確率の高いボトルネックを指摘してください。\n\n# 企画概要\n- 事業内容: ${vars.business_idea}\n- ターゲット: ${vars.target_market}\n- 価格・モデル: ${vars.pricing}\n\n# 指摘要件\n1. 競合に押し潰されるリスク\n2. 集客とマネタイズの壁\n3. 逆転のピボット差別化案`;
+      }
+    },
+    {
+      id: "planning_sns_viral",
+      categoryId: "planning",
+      name: "SNS（X/Threads）読まれる「バズ構成・保存推奨ポスト」",
+      desc: "フック、共感、箇条書きノウハウ、保存推奨CTAまで、インプレッションとブックマークを最大化する構成です。",
+      role: "月間1,000万インプレッションを誇るSNSグロースハッカー",
+      fields: [
+        { id: "topic", label: "発信したいテーマ・ノウハウ", placeholder: "例: ChatGPTで残業をゼロにするExcel時短術", default: "ChatGPTで定時退社を勝ち取る現場プロンプト術" },
+        { id: "target_reader", label: "届けたい読者像", placeholder: "例: 毎日2時間残業している20〜30代の会社員", default: "ルーティン業務に追われて時間が足りないデスクワーカー" },
+        { id: "key_takeaway", label: "読者が得られる最大のメリット", placeholder: "例: コピペで使える数式や文章で即日残業が消滅する", default: "コピペするだけで今日の残業が1時間削れる実戦テクニック" }
+      ],
+      generate: (vars, isXml) => {
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>ThreadsやXで保存（ブックマーク）とリポストを爆発させ、プロフ遷移やnote購入へ導くキラーポストを設計します。</context>
+<input_data>
+- テーマ: ${vars.topic}
+- ターゲット: ${vars.target_reader}
+- コアベネフィット: ${vars.key_takeaway}
+</input_data>
+<constraints>
+- 冒頭1行でスクロールの手を止めさせる強烈なフック（常識の否定や強烈な数字）
+- スマホ画面で一瞬で頭に入る改行・箇条書きレイアウト
+- 読了後に「あとで見返そう」と思わせる保存（ブクマ）推奨の仕掛け
+</constraints>
+<output_format>
+切り口の異なる3パターンの投稿文（フック型、箇条書きノウハウ型、ストーリー型）を出力してください。
+</output_format>`
+          : `# 指示\nあなたは【${vars.role}】です。Threads/Xでブックマークされる有益ポストを作成してください。\n\n# 前提\n- テーマ: ${vars.topic}\n- 読者: ${vars.target_reader}\n- メリット: ${vars.key_takeaway}\n\n# 構成ルール\n- 冒頭フック\n- 箇条書きノウハウ\n- 保存（ブクマ）推奨CTA\n- 3パターン作成`;
+      }
+    },
+    {
+      id: "planning_3c_matrix",
+      categoryId: "planning",
+      name: "競合他社を丸裸にする「3C分析＆差別化マップ」",
+      desc: "市場（Customer）、競合（Competitor）、自社（Company）を整理し、勝てるブルーオーシャンを特定します。",
+      role: "大手戦略ファーム出身のチーフマーケティングストラテジスト",
+      fields: [
+        { id: "my_service", label: "自社サービス・商材", placeholder: "例: ビジネス特化型AIプロンプト集＆自動化支援", default: "元手0円で始めるAI業務自動化・プロンプトテンプレート集" },
+        { id: "competitors", label: "想定される競合他社・代替品", placeholder: "例: 大手プログラミングスクール、汎用AI本、無料SNS投稿", default: "一般の無料AIブログ、高額なプロンプト販売講座、大手ITコンサル" }
+      ],
+      generate: (vars, isXml) => {
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>市場機会と競合の弱点を構造化し、自社が独占できる独自の提供価値（USP）を浮き彫りにする3C分析を実行します。</context>
+<input_data>
+- 自社商材: ${vars.my_service}
+- 主な競合: ${vars.competitors}
+</input_data>
+<output_format>
+1. 3C分析マトリクス（顧客ニーズの未充足点 / 競合の弱点・隙 / 自社の強み）
+2. 競合が真似できない「独自のポジショニング軸」
+3. マーケティングにおけるキラー訴求メッセージ
+</output_format>`
+          : `# 指示\n以下の商材について3C分析を実施し、競合差別化の勝ち筋を整理してください。\n\n# 自社商材: ${vars.my_service}\n# 競合他社: ${vars.competitors}\n\n# 出力要件\n- 3C分析表\n- ポジショニングマップの軸\n- 勝てるコアメッセージ`;
       }
     },
 
-    // Excel・データカテゴリ
+    // ----------------------------------------------------
+    // Excel・自動化カテゴリ
+    // ----------------------------------------------------
     {
       id: "data_excel_formula",
       categoryId: "data",
@@ -235,11 +303,9 @@ ${vars.transcript}
         { id: "sheet_layout", label: "対象の列・シート構成", placeholder: "例: 元データはSheet1のA〜C列、出力先はSheet2のB列", default: "参照元: 'マスタ'シートのA列(ID), C列(売上), D列(担当者)。出力先: 現在のシートのA列(ID)" }
       ],
       generate: (vars, isXml) => {
-        if (isXml) {
-          return `<role>${vars.role}</role>
-<context>
-ExcelまたはGoogleスプレッドシートで、エラーに強く保守性の高い最適な最新数式を構築します。
-</context>
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>ExcelまたはGoogleスプレッドシートで、エラーに強く保守性の高い最適な最新数式を構築します。</context>
 <input_data>
 - 目的・処理要件: ${vars.goal}
 - シート・セル配置: ${vars.sheet_layout}
@@ -247,30 +313,47 @@ ExcelまたはGoogleスプレッドシートで、エラーに強く保守性の
 <constraints>
 - 可能な限りモダンな関数（XLOOKUP, LET, FILTER, IFS等）を優先すること
 - エラーハンドリング（#N/A対策など）を組み込むこと
-- コピペ用コード枠と、数式の各引数の解説を明記すること
 </constraints>
 <output_format>
 1. 推奨数式（コピペ用コードブロック）
 2. 数式の解説（どの部分が何をしているか）
 3. 旧バージョン（VLOOKUP等）との違い・注意点
-</output_format>`;
-        } else {
-          return `# 指示
-以下の要件を満たす、最もスマートで壊れにくいExcel / スプレッドシートの関数式を作成してください。
-
-# 要件
-- 実現したいこと: ${vars.goal}
-- 対象レイアウト: ${vars.sheet_layout}
-
-# 出力内容
-- コピペ用数式（XLOOKUP等のモダン関数推奨）
-- 動作解説
-- 想定されるエラーと対策`;
-        }
+</output_format>`
+          : `# 指示\n以下の要件を満たす、壊れにくいモダンなExcel / スプシ関数を作成してください。\n\n# 要件: ${vars.goal}\n# 配置: ${vars.sheet_layout}\n\n# 出力\n- コピペ数式\n- 各引数の解説\n- エラー回避策`;
+      }
+    },
+    {
+      id: "data_gas_script",
+      categoryId: "data",
+      name: "非エンジニア用「Google Apps Script (GAS) 自動化コード」",
+      desc: "スプレッドシートやGmailの反復作業をワンクリックで自動化するコピペ用GASスクリプトを生成します。",
+      role: "Google Cloud 認定プロフェッショナル・自動化アーキテクト",
+      fields: [
+        { id: "auto_task", label: "自動化したいタスク内容", placeholder: "例: スプレッドシートのステータスが完了になったら、Slack/Gmailに自動通知したい", default: "スプレッドシートに入力されたURLの一覧を読み込み、Gemini APIを使って要約を隣のセルに書き込む" }
+      ],
+      generate: (vars, isXml) => {
+        return isXml
+          ? `<role>${vars.role}</role>
+<context>非エンジニアでもコピペするだけで即座に安全に動作するGoogle Apps Script（GAS）コードを構築します。</context>
+<input_data>
+- 自動化したい処理: ${vars.auto_task}
+</input_data>
+<constraints>
+- エラー処理（try/catch）を必ず実装すること
+- 変数名やシート名は冒頭の設定エリア（CONFIG定数）にまとめ、誰でも編集しやすくすること
+</constraints>
+<output_format>
+1. 完全なGASソースコード（コメント付き）
+2. スプレッドシートへの導入手順（拡張機能 > Apps Script への貼り付けガイド）
+3. 初回実行時の権限承認（許可）の流れ
+</output_format>`
+          : `# 指示\n非エンジニア向けに、コピペで動くGoogle Apps Script (GAS) コードを作成してください。\n\n# 自動化要件:\n${vars.auto_task}\n\n# 出力要件:\n- 完全なGASスクリプト\n- 設定手順\n- 権限承認の解説`;
       }
     },
 
-    // 深層思考カテゴリ
+    // ----------------------------------------------------
+    // 深層推論・監査カテゴリ
+    // ----------------------------------------------------
     {
       id: "deep_tot",
       categoryId: "deep",
@@ -292,17 +375,44 @@ ExcelまたはGoogleスプレッドシートで、エラーに強く保守性の
 </input_data>
 <thought_process>
 以下の3つのフェーズで論理を展開してください。
-【Phase 1: 仮説発散】
-全く異なる3つの戦略的アプローチ（アプローチA: 即効受託型、アプローチB: デジタルアセット型、アプローチC: ツール/仕組み化型）を立案する。
-
-【Phase 2: 批判的ストレステスト】
-各アプローチの「強み」「隠れたリスク」「制約下での実現可能性」を10点満点で厳密にスコアリング・比較する。
-
-【Phase 3: 最適ハイブリッド解の統合】
-3つのアプローチの良いところを組み合わせ、リスクを最小化した「最も勝率の高い実行ロードマップ」を策定する。
+【Phase 1: 仮説発散】全く異なる3つの戦略的アプローチ（アプローチA、B、C）を立案する。
+【Phase 2: 批判的ストレステスト】各アプローチの「強み」「隠れたリスク」「制約下での実現可能性」を10点満点で厳密にスコアリング・比較する。
+【Phase 3: 最適ハイブリッド解の統合】3つのアプローチの良いところを組み合わせ、リスクを最小化した「最も勝率の高い実行ロードマップ」を策定する。
 </thought_process>
 <output_format>
 Phase 1からPhase 3までの思考の軌跡と、最終的な結論・アクションプランを出力してください。
+</output_format>`;
+      }
+    },
+    {
+      id: "deep_critique_refine",
+      categoryId: "deep",
+      name: "ハルシネーション完全撲滅「自己監査＆推敲（Critique & Refine）構文」",
+      desc: "AIに知ったかぶりをさせず、一度自分で回答を自己批判・ファクトチェックさせてから出力させます。",
+      role: "厳格無比なファクトチェッカー兼シニアコンプライアンスオフィサー",
+      fields: [
+        { id: "audit_target", label: "分析・調査・執筆したい重要テーマ", placeholder: "例: 最新の生成AI著作権ガイドラインに関する企業の法務リスク分析", default: "生成AIを活用したコンテンツ販売における著作権・商標権リスクと回避策" }
+      ],
+      generate: (vars, isXml) => {
+        return `<role>${vars.role}</role>
+<context>
+事実誤認やもっともらしい嘘（ハルシネーション）を極限まで排除するため、AIが自らの回答を厳格に監査してから最終出力する多段ループを実行します。
+</context>
+<input_data>
+${vars.audit_target}
+</input_data>
+<thought_process>
+1. 【Draft】まず対象テーマについて網羅的な一次回答を作成せよ。
+2. 【Critique（自己監査）】一次回答を批判的に監査し、「推測で補完している箇所」「曖昧な記述」「論理の飛躍」を指摘せよ。
+3. 【Refine（最終推敲）】監査で指摘された欠点を完全に修正し、確証のある事実のみを残した高信頼性のアウトプットへ再構築せよ。
+</thought_process>
+<constraints>
+- 確信が持てない事項は「現時点で公式見解なし」「諸説あり」と明記すること
+- 推測による断定を一切禁止する
+</constraints>
+<output_format>
+【自己監査レポート（一次回答の課題点）】
+【最終監査済みアウトプット】
 </output_format>`;
       }
     }
@@ -317,11 +427,13 @@ let currentStyle = "standard";
 const categorySelectorEl = document.getElementById("category-selector");
 const templateSelectEl = document.getElementById("template-select");
 const templateDescEl = document.getElementById("template-description");
+const templateCountBadgeEl = document.getElementById("template-count-badge");
 const dynamicInputsEl = document.getElementById("dynamic-inputs");
 const promptOutputEl = document.getElementById("prompt-output");
 const copyBtnEl = document.getElementById("copy-btn");
 const copyToastEl = document.getElementById("copy-toast");
 const charCountEl = document.getElementById("char-count");
+const resetInputsBtnEl = document.getElementById("reset-inputs-btn");
 
 // 初期化
 function init() {
@@ -339,12 +451,19 @@ function renderCategories() {
   TEMPLATES_DATA.categories.forEach(cat => {
     const btn = document.createElement("button");
     const isActive = cat.id === currentCategory;
-    btn.className = `flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold border transition ${
+    const count = TEMPLATES_DATA.templates.filter(t => t.categoryId === cat.id).length;
+    btn.className = `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold border transition ${
       isActive
         ? "bg-brand-600/20 text-brand-400 border-brand-500/40 shadow-sm"
         : "bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200"
     }`;
-    btn.innerHTML = `<i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i><span>${cat.name}</span>`;
+    btn.innerHTML = `
+      <div class="flex items-center gap-2">
+        <i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i>
+        <span>${cat.name}</span>
+      </div>
+      <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-brand-500/30 text-brand-300' : 'bg-slate-800 text-slate-500'}">${count}</span>
+    `;
     btn.onclick = () => {
       currentCategory = cat.id;
       renderCategories();
@@ -371,6 +490,9 @@ function renderTemplateOptions() {
     currentTemplateId = filtered[0].id;
     updateTemplateDesc();
   }
+  if (templateCountBadgeEl) {
+    templateCountBadgeEl.textContent = `全${TEMPLATES_DATA.templates.length}種`;
+  }
 }
 
 function updateTemplateDesc() {
@@ -395,7 +517,7 @@ function renderFormFields() {
     label.textContent = field.label;
 
     let input;
-    if (field.id === "transcript" || field.id === "complex_problem") {
+    if (field.id === "transcript" || field.id === "complex_problem" || field.id === "report_content") {
       input = document.createElement("textarea");
       input.rows = 3;
       input.className = "w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 text-slate-200 resize-none";
@@ -447,6 +569,13 @@ function setupEventListeners() {
       generatePrompt();
     };
   });
+
+  if (resetInputsBtnEl) {
+    resetInputsBtnEl.onclick = () => {
+      renderFormFields();
+      generatePrompt();
+    };
+  }
 
   copyBtnEl.onclick = () => {
     if (!promptOutputEl.value) return;

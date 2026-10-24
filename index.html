@@ -4,7 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Prompt Studio - ビジネス特化型AIプロンプト即時生成メーカー【完全無料】</title>
-  <meta name="description" content="コピペで即日業務効率化！メール、議事録要約、企画書、Excel関数まで、実戦用AIプロンプトをワンクリックで自動生成する無料Webツール。">
+  <meta name="description" content="コピペで即日業務効率化！メール辞退、納期遅延、アポ獲得、議事録要約、Excel関数、Claude向けXML構文まで、実戦用AIプロンプトをワンクリックで自動生成する完全無料Webツール。">
+  <meta name="keywords" content="AIプロンプト生成, ChatGPTプロンプト, Claude XMLタグ, ビジネスプロンプト, 業務効率化, 無料ツール, プロンプトテンプレート">
+  <link rel="canonical" href="https://promptstudioweb.vercel.app/">
+
+  <!-- OGP / SNS Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://promptstudioweb.vercel.app/">
+  <meta property="og:title" content="AI Prompt Studio - ビジネス特化型AIプロンプト即時生成メーカー【完全無料】">
+  <meta property="og:description" content="コピペで即日残業ゼロへ！メール、議事録、企画、Excel関数からClaude深層推論まで、実戦用AIプロンプトをワンクリック生成。">
+  <meta property="og:site_name" content="AI Prompt Studio">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Prompt Studio - ビジネス特化型AIプロンプト即時生成メーカー">
+  <meta name="twitter:description" content="コピペで即日残業ゼロへ！ビジネス特化型AIプロンプトをワンクリック自動生成【完全無料】">
+
+  <!-- SEO 構造化データ (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Prompt Studio",
+    "url": "https://promptstudioweb.vercel.app/",
+    "description": "ビジネス特化型のAIプロンプトをワンクリックで自動生成する完全無料のWebツール。ChatGPT, Claude, Gemini対応。",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    },
+    "featureList": [
+      "ビジネスメール・交渉プロンプト即時生成",
+      "会議文字起こし・議事録要約プロンプト",
+      "新規事業壁打ち・3C分析プロンプト",
+      "Excelモダン関数・GASコード生成プロンプト",
+      "Claude推奨XMLタグ構造化構文へのワンクリック変換"
+    ]
+  }
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -57,13 +95,13 @@
   <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-between p-2 shadow-lg shadow-brand-500/20">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center p-2 shadow-lg shadow-brand-500/20">
           <i data-lucide="terminal" class="w-6 h-6 text-white"></i>
         </div>
         <div>
           <h1 class="font-bold text-lg leading-tight flex items-center gap-2">
             AI Prompt Studio
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">PRO Free</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">PRO v2.0 Free</span>
           </h1>
           <p class="text-xs text-slate-400">ビジネス特化型AIプロンプト即時生成メーカー</p>
         </div>
@@ -71,7 +109,7 @@
       <div class="flex items-center space-x-3">
         <a href="#note-banner" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
           <i data-lucide="book-open" class="w-4 h-4 text-brand-400"></i>
-          実践バイブル（note）
+          公式実践バイブル（note）
         </a>
       </div>
     </div>
@@ -96,11 +134,14 @@
 
       <!-- テンプレート選択 -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-          <i data-lucide="file-text" class="w-4 h-4 text-brand-400"></i>
-          2. 作成したいタスク・テンプレート
-        </label>
-        <select id="template-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-slate-200">
+        <div class="flex items-center justify-between mb-2">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-brand-400"></i>
+            2. 作成したいタスク・テンプレート
+          </label>
+          <span id="template-count-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-brand-400 border border-slate-700">全12種</span>
+        </div>
+        <select id="template-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-slate-200 font-medium">
           <!-- JSで動的にオプション生成 -->
         </select>
         <p id="template-description" class="text-xs text-slate-400 mt-2.5 leading-relaxed bg-slate-950/50 p-2.5 rounded-lg border border-slate-800/80"></p>
@@ -113,7 +154,10 @@
             <i data-lucide="sliders" class="w-4 h-4 text-brand-400"></i>
             3. 必要な情報を穴埋め入力
           </label>
-          <span class="text-[11px] text-slate-500">※空欄でも動きます</span>
+          <button id="reset-inputs-btn" class="text-[11px] text-slate-400 hover:text-brand-400 transition flex items-center gap-1">
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+            初期値に戻す
+          </button>
         </div>
         <div id="dynamic-inputs" class="space-y-4">
           <!-- JSで動的にインプットフィールドを描画 -->
@@ -190,23 +234,27 @@
           <div>
             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-bold mb-2">
               <i data-lucide="flame" class="w-3.5 h-3.5"></i>
-              noteにて公式バイブル公開中
+              noteにて公式バイブル公開中（先行限定価格）
             </div>
             <h3 class="text-base font-bold text-white mb-1">
               現場の残業をゼロにする「ビジネス特化型AIプロンプト実戦大全50選」
             </h3>
             <p class="text-xs text-slate-300 leading-relaxed max-w-xl">
-              本ツールに収録されている基本パターンのほか、炎上防止謝罪、条件交渉、役員稟議、Excelモダン関数、競合分析など、現場の仕事を10倍速にする決定版大全集（全57,000文字）を公開中！
+              本ツールに収録された基本パターンのほか、炎上防止謝罪、条件交渉、役員稟議、Excelモダン関数、競合分析など、現場の仕事を10倍速にする決定版大全集（全57,000文字）を公開中！
             </p>
           </div>
           <div class="flex flex-col gap-2 w-full sm:w-auto shrink-0">
             <a href="https://note.com/yu_ki_engineer/n/n0c23f70f9e92?sub_rt=share_pb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-400 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-brand-500/25 transition">
-              <span>プロンプト50選を読む</span>
+              <span>プロンプト50選を読む (1,980円)</span>
               <i data-lucide="external-link" class="w-4 h-4"></i>
             </a>
             <a href="https://note.com/yu_ki_engineer/n/ncb794999f53a?sub_rt=share_pb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 transition">
-              <span>0円自動化バイブル（980円）</span>
+              <span>0円自動化バイブル (980円)</span>
               <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+            <a href="https://note.com/yu_ki_engineer/n/nf0c6c046b755?sub_rt=share_pb" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-purple-900/40 hover:bg-purple-800/50 text-purple-300 text-[11px] font-semibold border border-purple-700/50 transition">
+              <span>深層プロンプティング思考法 (4,980円)</span>
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-400"></i>
             </a>
           </div>
         </div>
